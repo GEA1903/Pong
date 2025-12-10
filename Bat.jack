@@ -15,48 +15,48 @@
  */
 class Bat {
 
-    field int x, y;           // the bat's screen location
-    field int width, height;  // the bat's width and height
-    field int direction;      // direction of the bat's movement (1 = left, 2 = right)
+    field int x, y;           // posição da barra na tela
+    field int width, height;  // largura e altura da barra
+    field int direction;      // direção do movimento (1 = left, 2 = right)
 
-    /** Constructs a new bat with the given location and width. */
-    constructor Bat new(int Ax, int Ay, int Awidth, int Aheight) {
+    /** Constrói um novo bastão com a altura e largura dados */
+    constructor Bat new(int Ax, int Ay, int Awidth, int Aheight) {   /// constructor -- métodoque cria e inicializa um novo objeto
         let x = Ax;
         let y = Ay;
         let width = Awidth;
         let height = Aheight;
-        let direction = 2;
-        do show();
-        return this;
+        let direction = 2; /// direção inicial
+        do show();         /// desenha a barra
+        return this;       /// referência ao objeto criado
     }
 
-    /** Deallocates the object's memory. */
+    /** Libera a memória quando não precisa mais dela, sendo necessário fazer manualmente. Caso contrário, vazamento de memória */
     method void dispose() {
         do Memory.deAlloc(this);
         return;
     }
 
-    /** Shows the bat. */
+    /** Mostra bastão. */
     method void show() {
         do Screen.setColor(true);
         do draw();
         return;
     }
 
-    /** Hides the bat. */
+    /** Esconde o bastão */
     method void hide() {
         do Screen.setColor(false);
         do draw();
         return;
     }
 
-    /** Draws the bat. */
+    /** Desenha o bastão */
     method void draw() {
         do Screen.drawRectangle(x, y, x + width, y + height);
         return;
     }
 
-    /** Sets the bat's direction (0=stop, 1=left, 2=right). */
+    /** Define a direção do bastão(0=stop, 1=left, 2=right). */
     method void setDirection(int Adirection) {
         let direction = Adirection;
         return;

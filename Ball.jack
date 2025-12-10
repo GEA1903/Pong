@@ -40,14 +40,14 @@ class Ball {
         return;
     }
 
-    /** Shows the ball. */
+    /** Mostra a bola */
     method void show() {
         do Screen.setColor(true);
         do draw();
         return;
     }
 
-    /** Hides the ball. */
+    /** Esconde a bola */
     method void hide() {
         do Screen.setColor(false);
 	    do draw();
