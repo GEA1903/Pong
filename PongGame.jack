@@ -1,135 +1,195 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/11/Pong/PongGame.jack
+// Este arquivo faz parte de www.nand2tetris.org
+// e do livro "The Elements of Computing Systems"
+// por Nisan e Schocken, MIT Press.
+// Nome do arquivo: projects/11/Pong/PongGame.jack
 
 /**
- * Represents a Pong game.
+ * Representa um jogo Pong para dois jogadores.
+ * Modificado para suportar dois jogadores humanos controlando barras superior e inferior.
  */
 class PongGame {
 
-    static PongGame instance; // the singelton, a Pong game instance     
-    field Bat bat;            // the bat    ; field: variáveis de instância, exclusivas de cada objeto
-    field Ball ball;          // the ball
-    field int wall;           // the current wall that the ball is bouncing off of.
-    field boolean exit;       // true when the game is over
-    field int score;          // the current score.
-    field int lastWall;       // the last wall that the ball bounced off of.
+    static PongGame instance; // o singleton, uma instância do jogo Pong     
+    field Bat bat;            // a barra inferior (Jogador 1)
+    field Bat bat2;           // a barra superior (Jogador 2) - ADICIONADO
+    field Ball ball;          // a bola
+    field int wall;           // a parede atual com a qual a bola está colidindo
+    field boolean exit;       // verdadeiro quando o jogo termina
+    field int lastWall;       // a última parede com a qual a bola colidiu
+    field int batWidth;       // a largura atual das barras
 
-    // The current width of the bat
-    field int batWidth;
-
-    /** Constructs a new Pong game. */
+    /** Constrói um novo jogo Pong para dois jogadores. */
     constructor PongGame new() {
-	    do Screen.clearScreen();
-        let batWidth = 50;  // initial bat size
+        do Screen.clearScreen();
+        let batWidth = 50;  // tamanho inicial da barra
+        
+        // Jogador 1 - Barra inferior em y = 229
         let bat = Bat.new(230, 229, batWidth, 7);
-        let ball = Ball.new(253, 222, 0, 511, 0, 229);
-        do ball.setDestination(400,0);
-        do Screen.drawRectangle(0, 238, 511, 240);
-	    do Output.moveCursor(22,0);
-	    do Output.printString("Score: 0");
-	
-	    let exit = false;
-	    let score = 0;
-	    let wall = 0;
-	    let lastWall = 0;
+        
+        // Jogador 2 - Barra superior em y = 10 - ADICIONADO
+        let bat2 = Bat.new(230, 10, batWidth, 7);
+        
+        // Bola começa no meio, limites ajustados para considerar a barra superior
+        // paredeEsquerda: 0, paredeDireita: 511, paredeSuperior: 17 (abaixo da barra), paredeInferior: 229 (acima da barra)
+        let ball = Ball.new(253, 120, 0, 511, 17, 229);
+        
+        // Bola inicialmente se move para cima em direção ao Jogador 2
+        do ball.setDestination(400, 0);
+        
+        let exit = false;
+        let wall = 0;
+        let lastWall = 0;
 
         return this;
     }
 
-    /** Deallocates the object's memory. */
+    /** Desaloca a memória do objeto. */
     method void dispose() {
         do bat.dispose();
-	    do ball.dispose();
+        do bat2.dispose();  // ADICIONADO - desaloca barra superior
+        do ball.dispose();
         do Memory.deAlloc(this);
         return;
     }
 
-    /** Creates an instance of Pong game, and stores it. */
+    /** Cria uma instância do jogo Pong e a armazena. */
     function void newInstance() {
         let instance = PongGame.new();
         return;
     }
     
-    /** Returns the single instance of this Pong game. */
+    /** Retorna a única instância deste jogo Pong. */
     function PongGame getInstance() {
         return instance;
     }
 
-    /** Starts the game, and andles inputs from the user that control
-     *  the bat's movement direction. */
+    /** 
+     * Inicia o jogo e trata entradas de ambos os jogadores.
+     * Jogador 1 (inferior): Teclas de seta Esquerda/Direita
+     * Jogador 2 (superior): Teclas A (esquerda) / D (direita)
+     */
     method void run() {
         var char key;
 
         while (~exit) {
-            // waits for a key to be pressed.
+            // aguarda uma tecla ser pressionada
             while ((key = 0) & (~exit)) {
                 let key = Keyboard.keyPressed();
-                do bat.move();
                 do moveBall();
                 do Sys.wait(50);
             }
 
-            if (key = 130) { do bat.setDirection(1); }
-	        else {
-	            if (key = 132) { do bat.setDirection(2); }
-		        else {
-                    if (key = 140) { let exit = true; }
-		        }
+            // Controles do Jogador 1: Teclas de seta
+            if (key = 130) { do bat.setDirection(1); }      // Seta esquerda (130)
+            else {
+                if (key = 132) { do bat.setDirection(2); }  // Seta direita (132)
+                else {
+                    if (key = 140) { let exit = true; }     // Tecla ESC (140)
+                    else {
+                        do bat.setDirection(0);             // Para Jogador 1 se não for seta
+                    }
+                }
+            }
+            
+            // Controles do Jogador 2: Teclas a e d (minúsculas) - ADICIONADO
+            if (key = 97) { do bat2.setDirection(1); }      // Tecla 'a' (97) - esquerda
+            else {
+                if (key = 100) { do bat2.setDirection(2); } // Tecla 'd' (100) - direita
+                else {
+                    do bat2.setDirection(0);                // Para Jogador 2 se não for a ou d
+                }
             }
 
-            // Waits for the key to be released.
+            // Aguarda a tecla ser liberada e continua movendo
             while ((~(key = 0)) & (~exit)) {
                 let key = Keyboard.keyPressed();
-                do bat.move();
+                do bat.move();      // move barra do Jogador 1
+                do bat2.move();     // move barra do Jogador 2
                 do moveBall();
                 do Sys.wait(50);
             }
         }
 
-	    if (exit) {
-            do Output.moveCursor(10,27);
-	        do Output.printString("Game Over");
-	    }
+        // Exibe mensagem de Game Over com informação do vencedor
+        if (exit) {
+            do Output.moveCursor(10, 15);
+            
+            // Determina qual jogador perdeu baseado em qual parede foi atingida
+            if (wall = 4) {
+                do Output.printString("Game Over - Jogador 1 perdeu!");
+            }
+            else {
+                if (wall = 3) {
+                    do Output.printString("Game Over - Jogador 2 perdeu!");
+                }
+                else {
+                    do Output.printString("Game Over");
+                }
+            }
+        }
             
         return;
     }
 
     /**
-     * Handles ball movement, including bouncing.
-     * If the ball bounces off a wall, finds its new direction.
-     * If the ball bounces off the bat, increases the score by one
-     * and shrinks the bat's size, to make the game more challenging. 
+     * Trata o movimento da bola, incluindo rebotes.
+     * Verifica colisão com ambas as barras superior (Jogador 2) e inferior (Jogador 1).
+     * Se a bola passar de uma barra, aquele jogador perde.
      */
     method void moveBall() {
         var int bouncingDirection, batLeft, batRight, ballLeft, ballRight;
+        var int bat2Left, bat2Right;  // ADICIONADO - posições da barra superior
 
         let wall = ball.move();
 
         if ((wall > 0) & (~(wall = lastWall))) {
             let lastWall = wall;
             let bouncingDirection = 0;
+            
+            // Obtém posições de ambas as barras e da bola
             let batLeft = bat.getLeft();
             let batRight = bat.getRight();
+            let bat2Left = bat2.getLeft();      // ADICIONADO
+            let bat2Right = bat2.getRight();    // ADICIONADO
             let ballLeft = ball.getLeft();
             let ballRight = ball.getRight();
   
+            // Colisão com parede INFERIOR (lado do Jogador 1) - wall = 4
             if (wall = 4) {
+                // Verifica se a bola passou da barra (Game Over para Jogador 1)
                 let exit = (batLeft > ballRight) | (batRight < ballLeft);
+                
                 if (~exit) {
-                    if (ballRight < (batLeft + 10)) { let bouncingDirection = -1; }
-                    else {
-                        if (ballLeft > (batRight - 10)) { let bouncingDirection = 1; }
+                    // Bola acertou a barra - ajusta ângulo de rebote baseado na posição do impacto
+                    if (ballRight < (batLeft + 10)) { 
+                        let bouncingDirection = -1;  // acertou lado esquerdo da barra
                     }
-
-                    let batWidth = batWidth - 2;
-                    do bat.setWidth(batWidth);      
-                    let score = score + 1;
-                    do Output.moveCursor(22,7);
-                    do Output.printInt(score);
+                    else {
+                        if (ballLeft > (batRight - 10)) { 
+                            let bouncingDirection = 1;  // acertou lado direito da barra
+                        }
+                    }
                 }
             }
+            
+            // Colisão com parede SUPERIOR (lado do Jogador 2) - wall = 3 - ADICIONADO
+            if (wall = 3) {
+                // Verifica se a bola passou da barra (Game Over para Jogador 2)
+                let exit = (bat2Left > ballRight) | (bat2Right < ballLeft);
+                
+                if (~exit) {
+                    // Bola acertou a barra - ajusta ângulo de rebote baseado na posição do impacto
+                    if (ballRight < (bat2Left + 10)) { 
+                        let bouncingDirection = -1;  // acertou lado esquerdo da barra
+                    }
+                    else {
+                        if (ballLeft > (bat2Right - 10)) { 
+                            let bouncingDirection = 1;  // acertou lado direito da barra
+                        }
+                    }
+                }
+            }
+            
             do ball.bounce(bouncingDirection);
         }
         return;
