@@ -9,7 +9,7 @@
 class PongGame {
 
     static PongGame instance; // the singelton, a Pong game instance     
-    field Bat bat;            // the bat
+    field Bat bat;            // the bat    ; field: variáveis de instância, exclusivas de cada objeto
     field Ball ball;          // the ball
     field int wall;           // the current wall that the ball is bouncing off of.
     field boolean exit;       // true when the game is over

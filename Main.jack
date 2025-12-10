@@ -10,7 +10,7 @@ class Main {
 
     /** Initializes a Pong game and starts running it. */
     function void main() {   /////void -- não retona valor; inicialização da função principal
-        var PongGame game;  ///// variável local game do tipo Ponggame
+        var PongGame game;  ///// variável local (própria do método) game do tipo Ponggame
         do PongGame.newInstance(); ////// cria o objeto e guarda numa variável
         let game = PongGame.getInstance(); ///// atribuição da variável game a instância do jogo
         do game.run(); /////roda o jogo
