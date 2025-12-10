@@ -15,17 +15,17 @@ class Bat {
     field int direction;      // direção do movimento (1 = left, 2 = right)
 
     /** Constrói um novo bastão com a altura e largura dados */
-    constructor Bat new(int Ax, int Ay, int Awidth, int Aheight) {   /// constructor
+    constructor Bat new(int Ax, int Ay, int Awidth, int Aheight) {   /// constructor -- método que cria e inicializa um novo objeto
         let x = Ax;
         let y = Ay;
         let width = Awidth;
         let height = Aheight;
-        let direction = 0;   /// CORREÇÃO: Começa parado (era 2 antes)
+        let direction = 0;   ///  Começa parado (era 2 antes)
         do show();           /// desenha a barra
         return this;         /// referência ao objeto criado
     }
 
-    /** Libera a memória quando não precisa mais dela. */
+    /** Libera a memória quando não precisa mais dela, sendo necessário fazer manualmente. Caso contrário, vazamento de memória */
     method void dispose() {
         do Memory.deAlloc(this);
         return;
@@ -33,45 +33,45 @@ class Bat {
 
     /** Mostra bastão. */
     method void show() {
-        do Screen.setColor(true);
+        do Screen.setColor(true);  // true = preto (desenhar)
         do draw();
         return;
     }
 
     /** Esconde o bastão */
     method void hide() {
-        do Screen.setColor(false);
+        do Screen.setColor(false);   // false = branco (apagar)
         do draw();
         return;
     }
 
     /** Desenha o bastão */
     method void draw() {
-        do Screen.drawRectangle(x, y, x + width, y + height);
+        do Screen.drawRectangle(x, y, x + width, y + height);    //drawRectangle(x1, y1, x2, y2) desenha um retângulo de (x1,y1) até (x2,y2)
         return;
     }
 
-    /** Define a direção do bastão (0=stop, 1=left, 2=right). */
+    /** Define a direção do bastão (0=stop, 1=left, 2=right). Chamado quando jogador pressiona tecla: muda para onde a barra vai se mover*/
     method void setDirection(int Adirection) {
         let direction = Adirection;
         return;
     }
 
-    /** Returns the bat's left edge. */
+    /** Retorna a borda esquerda. */
     method int getLeft() {
         return x;
     }
 
-    /** Returns the bat's right edge. */
+    /** etorna a borda direita, detectando colisões com a bola */
     method int getRight() {
         return x + width;
     }
 
-    /** Sets the bat's width. */
+    /** Redimensiona o comprimento do bastão */
     method void setWidth(int Awidth) {
-        do hide();
-        let width = Awidth;
-        do show();
+        do hide();  // apaga a barra antiga
+        let width = Awidth;  // atualiza a largura
+        do show();  // desenha a barra nova
         return;
     }
 
@@ -86,7 +86,7 @@ class Bat {
             do Screen.drawRectangle(x, y, x + 3, y + height);
         }
         else {
-            // CORREÇÃO AQUI: Verifica explicitamente se é 2.
+            // Verifica explicitamente se é 2.
             // Se for 0 (parado), ele não entra aqui e a barra fica imóvel.
             if (direction = 2) {
                 let x = x + 4;
