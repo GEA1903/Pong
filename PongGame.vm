@@ -179,7 +179,7 @@ label PongGame_14
     push pointer 0
     call PongGame.moveBall 1
     pop temp 0
-    push constant 50
+    push constant 65
     call Sys.wait 1
     pop temp 0
     goto PongGame_14
