@@ -10,31 +10,31 @@
  */
 class Ball {
 
-    field int x, y;               // the ball's screen location (in pixels)
-    field int lengthx, lengthy;   // distance of last destination (in pixels)
+    field int x, y;               // localização da bola na tela (in pixels)
+    field int lengthx, lengthy;   // distância do último destino (in pixels)
 
-    field int d, straightD, diagonalD;            // used for straight line movement computation
-    field boolean invert, positivex, positivey;   // (same)
+    field int d, straightD, diagonalD;            // usado para computação de movimento em linha reta - Algoritmo de Bresenham
+    field boolean invert, positivex, positivey;   // (mesmo uso)
    
-    field int leftWall, rightWall, topWall, bottomWall;  // wall locations
+    field int leftWall, rightWall, topWall, bottomWall;  // localização das paredes, determinando onde a bola pode se mover
    
-    field int wall;   // last wall that the ball was bounced off of
+    field int wall;   // última parede com a qual a bola colidiu
 
-    /** Constructs a new ball with the given initial location and wall locations. */
+    /** Constrói uma nova bola com as localizações inicias e localizações das paredes dadas inicialmente */
     constructor Ball new(int Ax, int Ay,
                          int AleftWall, int ArightWall, int AtopWall, int AbottomWall) {    	
 	    let x = Ax;		
 	    let y = Ay;
 	    let leftWall = AleftWall;
-	    let rightWall = ArightWall - 6;    // -6 for ball size
+	    let rightWall = ArightWall - 6;    // -6 para o tamanho da bola
 	    let topWall = AtopWall; 
-	    let bottomWall = AbottomWall - 6;  // -6 for ball size
+	    let bottomWall = AbottomWall - 6;  // -6 para o tamanho da bola
 	    let wall = 0;
         do show();
         return this;
     }
 
-    /** Deallocates the Ball's memory. */
+    /** Desloca a memória da bola */
     method void dispose() {
         do Memory.deAlloc(this);
         return;
@@ -54,23 +54,23 @@ class Ball {
         return;
     }
 
-    /** Draws the ball. */
+    /** Desenha a bola */
     method void draw() {
 	    do Screen.drawRectangle(x, y, x + 5, y + 5);
 	    return;
     }
 
-    /** Returns the ball's left edge. */
+    /** Retorna a coordenada x (borda esquerda). */
     method int getLeft() {
         return x;
     }
 
-    /** Returns the ball's right edge. */
+    /** Returns x + 5 (borda direita, já que bola tem largura 6) */
     method int getRight() {
         return x + 5;
     }
 
-    /** Computes and sets the ball's destination. */
+    /** Define para onde a bola deve ir */
     method void setDestination(int destx, int desty) {
         var int dx, dy, temp;
   	    let lengthx = destx - x;
@@ -99,10 +99,10 @@ class Ball {
     }
 
     /**
-     * Moves the ball one unit towards its destination.
-     * If the ball has reached a wall, returns 0.
-     * Else, returns a value according to the wall:
-     * 1 (left wall), 2 (right wall), 3 (top wall), 4 (bottom wall).
+     * Move a bola uma unidade mais próximo ao seu destino.
+     * Se a bola atingir a parede, retorna 0.
+     * Caso contrário, retorna um valor de acordo com a parede:
+     * 1 (parede esquerda), 2 (parede direita), 3 (parede superior), 4 (parede inferior).
      */
     method int move() {
 
@@ -154,9 +154,8 @@ class Ball {
     }
 
     /**
-     * Bounces off the current wall: sets the new destination
-     * of the ball according to the ball's angle and the given
-     * bouncing direction (-1/0/1=left/center/right or up/center/down).
+     * Calcula o novo destino da bola após rebater
+     * parâmetros (-1/0/1=esquerda/centro/direita ou cima/centro/baixo).
      */
     method void bounce(int bouncingDirection) {
         var int newx, newy, divLengthx, divLengthy, factor;
@@ -167,9 +166,9 @@ class Ball {
 	    if (bouncingDirection = 0) { let factor = 10; }
 	    else {
 	        if (((~(lengthx < 0)) & (bouncingDirection = 1)) | ((lengthx < 0) & (bouncingDirection = (-1)))) {
-                let factor = 20; // bounce direction is in ball direction
+                let factor = 20; // direção do rebote está na direção da bola
             }
-	        else { let factor = 5; } // bounce direction is against ball direction
+	        else { let factor = 5; } // direção do rebote está contra a direção da bola
 	    }
 
 	    if (wall = 1) {
@@ -189,7 +188,7 @@ class Ball {
 		            let newx = (divLengthx * (-25)) / divLengthy;
                     let newx = x + (newx * factor);
 		        }
-                else { // assumes wall = 4
+                else { // assume wall = 4
 		            let newy = 0;
 		            let newx = (divLengthx * 25) / divLengthy;
                     let newx = x + (newx * factor);

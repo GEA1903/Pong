@@ -4,14 +4,14 @@
 // File name: projects/11/Pong/Main.jack
 
 /**
- * The main class of the Pong game.
+ * Principal classe
  */
 class Main {
 
     /** Inicializa o jogo pong e roda. */
     function void main() {   /////void -- não retona valor, é um método de ação que não retorna nada; inicialização da função principal
         var PongGame game;  ///// variável local (própria do método) game do tipo Ponggame
-        do PongGame.newInstance(); ////// cria o objeto e guarda numa variável
+        do PongGame.newInstance(); ////// cria o objeto e guarda numa variável. Chama a função newInstance do Ponggame
         let game = PongGame.getInstance(); ///// atribuição da variável game a instância do jogo
         do game.run(); /////roda o jogo
         do game.dispose(); //// após o loop 

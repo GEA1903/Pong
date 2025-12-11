@@ -11,7 +11,7 @@ class PongGame {
 
     static PongGame instance; // o singleton, uma instância do jogo Pong     
     field Bat bat;            // a barra inferior (Jogador 1)
-    field Bat bat2;           // a barra superior (Jogador 2) - ADICIONADO
+    field Bat bat2;           // a barra superior (Jogador 2) 
     field Ball ball;          // a bola
     field int wall;           // a parede atual com a qual a bola está colidindo
     field boolean exit;       // verdadeiro quando o jogo termina
@@ -26,7 +26,7 @@ class PongGame {
         // Jogador 1 - Barra inferior em y = 229
         let bat = Bat.new(230, 229, batWidth, 7);
         
-        // Jogador 2 - Barra superior em y = 10 - ADICIONADO
+        // Jogador 2 - Barra superior em y = 10 
         let bat2 = Bat.new(230, 10, batWidth, 7);
         
         // Bola começa no meio, limites ajustados para considerar a barra superior
@@ -46,7 +46,7 @@ class PongGame {
     /** Desaloca a memória do objeto. */
     method void dispose() {
         do bat.dispose();
-        do bat2.dispose();  // ADICIONADO - desaloca barra superior
+        do bat2.dispose();  //  desaloca barra superior
         do ball.dispose();
         do Memory.deAlloc(this);
         return;
@@ -91,7 +91,7 @@ class PongGame {
                 }
             }
             
-            // Controles do Jogador 2: Teclas a e d (minúsculas) - ADICIONADO
+            // Controles do Jogador 2: Teclas a e d (minúsculas) 
             if (key = 97) { do bat2.setDirection(1); }      // Tecla 'a' (97) - esquerda
             else {
                 if (key = 100) { do bat2.setDirection(2); } // Tecla 'd' (100) - direita
@@ -138,7 +138,7 @@ class PongGame {
      */
     method void moveBall() {
         var int bouncingDirection, batLeft, batRight, ballLeft, ballRight;
-        var int bat2Left, bat2Right;  // ADICIONADO - posições da barra superior
+        var int bat2Left, bat2Right;  // posições da barra superior
 
         let wall = ball.move();
 
@@ -149,8 +149,8 @@ class PongGame {
             // Obtém posições de ambas as barras e da bola
             let batLeft = bat.getLeft();
             let batRight = bat.getRight();
-            let bat2Left = bat2.getLeft();      // ADICIONADO
-            let bat2Right = bat2.getRight();    // ADICIONADO
+            let bat2Left = bat2.getLeft();      
+            let bat2Right = bat2.getRight();    
             let ballLeft = ball.getLeft();
             let ballRight = ball.getRight();
   
@@ -172,7 +172,7 @@ class PongGame {
                 }
             }
             
-            // Colisão com parede SUPERIOR (lado do Jogador 2) - wall = 3 - ADICIONADO
+            // Colisão com parede SUPERIOR (lado do Jogador 2) - wall = 3 
             if (wall = 3) {
                 // Verifica se a bola passou da barra (Game Over para Jogador 2)
                 let exit = (bat2Left > ballRight) | (bat2Right < ballLeft);
