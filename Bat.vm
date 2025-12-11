@@ -10,7 +10,7 @@ function Bat.new 0
     pop this 2
     push argument 3
     pop this 3
-    push constant 2
+    push constant 0
     pop this 4
     push pointer 0
     call Bat.show 1
@@ -152,6 +152,11 @@ label Bat_2
     pop temp 0
     goto Bat_0
 label Bat_1
+    push this 4
+    push constant 2
+    eq
+    not
+    if-goto Bat_5
     push this 0
     push constant 4
     add
@@ -162,14 +167,14 @@ label Bat_1
     push constant 511
     gt
     not
-    if-goto Bat_5
+    if-goto Bat_7
     push constant 511
     push this 2
     sub
     pop this 0
-    goto Bat_4
-label Bat_5
-label Bat_4
+    goto Bat_6
+label Bat_7
+label Bat_6
     push constant 0
     call Screen.setColor 1
     pop temp 0
@@ -203,6 +208,9 @@ label Bat_4
     add
     call Screen.drawRectangle 4
     pop temp 0
+    goto Bat_4
+label Bat_5
+label Bat_4
 label Bat_0
     push constant 0
     return
