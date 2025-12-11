@@ -106,7 +106,7 @@ class PongGame {
                 do bat.move();      // move barra do Jogador 1
                 do bat2.move();     // move barra do Jogador 2
                 do moveBall();
-                do Sys.wait(50);
+                do Sys.wait(65);
             }
         }
 
